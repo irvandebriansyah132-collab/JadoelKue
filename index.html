@@ -1,56 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jadoel Kue</title>
-    <style>
-        body { font-family: sans-serif; background: #2d1b10; color: #fdf5e6; text-align: center; padding: 20px; }
-        .box { background: #3e2717; padding: 20px; border-radius: 15px; border: 2px solid #d4a373; max-width: 400px; margin: auto; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #d4a373; background: #2d1b10; color: white; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: #d4a373; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; }
-    </style>
-</head>
-<body>
-
-<div class="box">
-    <h2>JADOEL KUE</h2>
-    <form id="absenForm">
-        <input type="hidden" name="_site_name" value="JADOEL KUE">
-        <input type="hidden" name="_subject" value="Absensi Baru!">
-        
-        <input type="text" name="Nama" placeholder="Nama Lengkap" required>
-        <select name="Status">
-            <option>Absen Masuk</option>
-            <option>Absen Pulang</option>
-        </select>
-        <textarea name="Pesan" placeholder="Curhatan..."></textarea>
-        
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_next" value="">
-
-        <button type="submit" id="btn">KIRIM ABSEN</button>
-    </form>
-</div>
-
 <script>
-    const f = document.getElementById('absenForm');
+    // Fungsi Update Waktu WIB
+    function updateWaktu() {
+        const opsi = {
+            timeZone: "Asia/Jakarta",
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
+        
+        const sekarang = new Date().toLocaleString("id-ID", opsi);
+        document.getElementById('jam').innerText = sekarang + " WIB";
+        document.getElementById('wib').value = sekarang + " WIB";
+    }
+
+    // Jalankan tiap detik
+    setInterval(updateWaktu, 1000);
+    updateWaktu();
+
+    // Proses Kirim Form
+    const f = document.getElementById('formAbsen');
     f.addEventListener('submit', function(e) {
         e.preventDefault();
         const b = document.getElementById('btn');
         b.innerText = "MENGIRIM...";
+        b.disabled = true;
 
         fetch("https://formsubmit.co/ajax/irvandebriansyah132@gmail.com", {
             method: "POST",
             body: new FormData(this)
         })
         .then(() => {
-            alert("SUKSES! Data Jadoel Kue Terkirim.");
-            f.reset(); // Otomatis refresh form jadi kosong lagi
+            alert("ABSEN BERHASIL TERKIRIM!");
+            f.reset();
+            updateWaktu();
             b.innerText = "KIRIM ABSEN";
+            b.disabled = false;
         })
-        .catch(() => alert("Gagal!"));
+        .catch(() => {
+            alert("Gagal, cek koneksi!");
+            b.disabled = false;
+        });
     });
 </script>
-
-</body>
-</html>
